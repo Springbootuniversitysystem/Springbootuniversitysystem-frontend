@@ -3,7 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { registerLearner } from '../services/authService';
 import './CreateAccount.css';
 
-const grades = ['Grade 11', 'Grade 12'];
+const grades = [
+  { label: 'Grade 11', value: 'GRADE_11' },
+  { label: 'Grade 12', value: 'GRADE_12' },
+];
 
 const provinces = [
   'Eastern Cape', 'Free State', 'Gauteng', 'KwaZulu-Natal',
@@ -24,6 +27,7 @@ function CreateAccount() {
     fullName: '',
     grade: '',
     email: '',
+    phoneNumber: '',
     schoolName: '',
     province: '',
     password: '',
@@ -88,7 +92,11 @@ function CreateAccount() {
 
 
   function renderGradeOption(g) {
-    return <option key={g} value={g}>{g}</option>;
+    return (
+        <option key={g.value} value={g.value}>
+          {g.label}
+        </option>
+    );
   }
 
   function renderProvinceOption(p) {
@@ -173,6 +181,18 @@ function CreateAccount() {
               value={form.email}
               onChange={handleEmailChange}
               required
+            />
+          </div>
+
+          <div className="field">
+            <label htmlFor="phoneNumber">Phone Number</label>
+            <input
+                id="phoneNumber"
+                type="tel"
+                placeholder="0812345678"
+                value={form.phoneNumber}
+                onChange={(e) => updateField('phoneNumber', e.target.value)}
+                required
             />
           </div>
 
