@@ -2,7 +2,7 @@ function getBaseUrl() {
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL;
   }
-  return 'http://localhost:8080/api';
+  return 'http://localhost:8085/api/v1';
 }
 
 const BASE_URL = getBaseUrl();

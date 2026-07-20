@@ -1,14 +1,14 @@
 import request from './api';
 
 export function registerLearner(formData) {
-  return request('/auth/register', {
+  return request('/learners/register', {
     method: 'POST',
     body: JSON.stringify(formData),
   });
 }
 
 export function loginLearner(credentials) {
-  return request('/auth/login', {
+  return request('/learners/login', {
     method: 'POST',
     body: JSON.stringify(credentials),
   });
