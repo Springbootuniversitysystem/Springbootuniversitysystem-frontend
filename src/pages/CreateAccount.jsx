@@ -54,6 +54,10 @@ function CreateAccount() {
     updateField('schoolName', e.target.value);
   }
 
+    function handleSchoolNameChange(e) {
+      updateField('schoolName', e.target.value);
+    }
+
   function handleProvinceChange(e) {
     updateField('province', e.target.value);
   }
