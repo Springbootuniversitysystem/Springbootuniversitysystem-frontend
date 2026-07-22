@@ -1,0 +1,180 @@
+/* Navigation Header Frame */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 60px;
+  height: 80px;
+  background-color: #0c1e36;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 1000;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  background-color: #dfb15b;
+  color: #0c1e36;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.logo-text {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+.logo-subtext {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #dfb15b;
+  letter-spacing: 1.5px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.nav-link {
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.active-nav-link {
+  background-color: #dfb15b;
+  color: #0c1e36;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.login-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.signup-btn {
+  background-color: #dfb15b;
+  color: #0c1e36;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.session-badge {
+  color: #dfb15b;
+  border: 1px solid #dfb15b;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.logout-btn {
+  background-color: #ef4444;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Authentication Overlay Portal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(12, 30, 54, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.login-card {
+  background-color: #ffffff;
+  padding: 35px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 20px 25px rgba(0,0,0,0.15);
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #94a3b8;
+}
+
+.error-alert {
+  padding: 10px;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  font-size: 0.85rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 6px;
+}
+
+.auth-input {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  margin-bottom: 16px;
+}
+
+.submit-btn {
+  padding: 12px;
+  background-color: #0c1e36;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
