@@ -1,18 +1,69 @@
-import { useState } from 'react';
+import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 import { getRecommendedCourses } from '../services/recommendationsStore';
+import { getProfile, updateProfile } from "../services/learnerService";
+
 import './Profile.css';
 
+
 function Profile() {
+
+  const gradeOptions = [
+    { value: "GRADE_11", label: "Grade 11" },
+    { value: "GRADE_12", label: "Grade 12" }
+  ];
+
+  //Grade helper method
+  function formatGrade(grade) {
+    const option = gradeOptions.find((g) => g.value === grade);
+    return option ? option.label : grade;
+  }
+
+
+  const analysis = getRecommendedCourses();
   const [courses, setCourses] = useState(getRecommendedCourses());
+  console.log("Courses:", courses);
   const [showSavedOnly, setShowSavedOnly] = useState(false);
   const [savedProfile, setSavedProfile] = useState({
-    fullName: 'Sipho Nkosi',
-    school: 'Orlando High School',
-    grade: 'Grade 12',
-    email: 'sipho.nkosi@gmail.com',
+    fullName: "",
+    school: "",
+    grade: "",
+    email: "",
   });
-  const [profileForm, setProfileForm] = useState(savedProfile);
+  const [profileForm, setProfileForm] = useState({
+    id: "",
+    fullName: "",
+    school: "",
+    grade: "",
+    email: "",
+  });
+
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const response = await getProfile();
+
+        const learner = response.data;
+
+        const profile = {
+          id: learner.id,
+          fullName: `${learner.firstName} ${learner.lastName}`,
+          school: learner.schoolName || "",
+          grade: learner.grade || "",
+          email: learner.email || "",
+        };
+
+        setSavedProfile(profile);
+        setProfileForm(profile);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    loadProfile();
+  }, []);
+
+
 
   function toggleSave(courseId) {
     const updated = courses.map(function (course) {
@@ -62,10 +113,56 @@ function Profile() {
     updateProfileField('email', e.target.value);
   }
 
-  function handleSaveChanges(e) {
+  async function handleSaveChanges(e) {
     e.preventDefault();
-    setSavedProfile(profileForm);
-    // TODO: wire up to PUT /users/me once the backend endpoint exists
+
+    try {
+      const names = profileForm.fullName.trim().split(" ");
+
+      const payload = {
+        firstName: names[0] || "",
+        lastName: names.slice(1).join(" "),
+        email: profileForm.email,
+        phoneNumber: profileForm.phoneNumber,
+        grade: profileForm.grade,
+        province: profileForm.province,
+        schoolName: profileForm.school,
+        careerGoal: profileForm.careerGoal,
+      };
+
+      const response = await updateProfile(
+          profileForm.id,
+          payload
+      );
+
+      const learner = response.data;
+
+      setSavedProfile({
+        id: learner.id,
+        fullName: `${learner.firstName} ${learner.lastName}`,
+        school: learner.schoolName,
+        grade: learner.grade,
+        email: learner.email,
+        phoneNumber: learner.phoneNumber,
+        province: learner.province,
+        careerGoal: learner.careerGoal,
+      });
+
+      setProfileForm({
+        id: learner.id,
+        fullName: `${learner.firstName} ${learner.lastName}`,
+        school: learner.schoolName,
+        grade: learner.grade,
+        email: learner.email,
+        phoneNumber: learner.phoneNumber,
+        province: learner.province,
+        careerGoal: learner.careerGoal,
+      });
+
+      alert("Profile updated successfully!");
+    } catch (err) {
+      alert(err.message);
+    }
   }
 
   function getInitials(fullName) {
@@ -89,6 +186,8 @@ function Profile() {
       toggleSave(course.id);
     }
 
+
+
     return (
       <div key={course.id} className="course-card">
         <div className="course-icon-wrap">
@@ -100,14 +199,25 @@ function Profile() {
         </div>
 
         <div className="course-info">
-          <p className="course-name">{course.name}</p>
-          <p className="course-university">{course.university}</p>
-          <p className="course-category">{course.category}</p>
+          <p className="course-name">{course.programmeName}</p>
+
+          <p className="course-university">
+            {course.institutionName}
+          </p>
+
+          <p className="course-category">
+            {course.faculty}
+          </p>
         </div>
 
         <div className="course-match">
-          <p className="match-percent">{course.match}%</p>
-          <p className="match-label">match</p>
+          <p className="match-percent">
+            APS {course.minimumAps}
+          </p>
+
+          <p className="match-label">
+            Required
+          </p>
         </div>
 
         <button
@@ -152,7 +262,7 @@ function Profile() {
         </div>
 
         <div className="nav-actions">
-          <Link to="/dashboard" className="nav-profile-btn">
+          <Link to="/profile" className="nav-profile-btn">
             <img
               src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/person-fill.svg"
               alt=""
@@ -168,7 +278,7 @@ function Profile() {
           <div className="profile-avatar">{getInitials(savedProfile.fullName)}</div>
           <div className="profile-header-info">
             <h1>{savedProfile.fullName}</h1>
-            <p className="profile-subline">{savedProfile.grade} — {savedProfile.school}</p>
+            <p className="profile-subline">{formatGrade(savedProfile.grade)} — {savedProfile.school}</p>
             <p className="profile-email">{savedProfile.email}</p>
           </div>
           <Link to="/career-guidance" className="new-session-btn">
@@ -290,12 +400,18 @@ function Profile() {
 
               <div className="field">
                 <label htmlFor="grade">Grade</label>
-                <input
-                  id="grade"
-                  type="text"
-                  value={profileForm.grade}
-                  onChange={handleGradeChange}
-                />
+
+                <select
+                    id="grade"
+                    value={profileForm.grade}
+                    onChange={handleGradeChange}
+                >
+                  {gradeOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                  ))}
+                </select>
               </div>
 
               <div className="field">
