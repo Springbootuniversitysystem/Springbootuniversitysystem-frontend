@@ -5,6 +5,8 @@ import CreateAccount from './pages/CreateAccount';
 import SignIn from './pages/SignIn';
 import MarksAnalysis from './pages/MarksAnalysis';
 import Profile from './pages/Profile';
+import Contact from './pages/Contact';
+
 
 function App() {
   return (
@@ -16,6 +18,7 @@ function App() {
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/marks-analysis" element={<MarksAnalysis />} />
         <Route path="/dashboard" element={<Profile />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
     </BrowserRouter>
   );

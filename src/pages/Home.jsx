@@ -72,7 +72,7 @@ function Home() {
           <a href="#home" className="nav-link nav-link-active">Home</a>
           <Link to="/career-guidance" className="nav-link">Career Guidance</Link>
           <a href="#about" className="nav-link">About Us</a>
-          <a href="#contact" className="nav-link">Contact</a>
+         <Link to="/contact" className="nav-link">Contact</Link>
         </div>
 
         <div className="nav-actions">

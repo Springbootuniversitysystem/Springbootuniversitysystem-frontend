@@ -201,7 +201,7 @@ function MarksAnalysis() {
           <Link to="/" className="nav-link">Home</Link>
           <Link to="/career-guidance" className="nav-link nav-link-active">Career Guidance</Link>
           <Link to="/about-us" className="nav-link">About Us</Link>
-          <a href="#contact" className="nav-link">Contact</a>
+        <Link to="/contact" className="nav-link">Contact</Link>
         </div>
 
         <div className="nav-actions">
