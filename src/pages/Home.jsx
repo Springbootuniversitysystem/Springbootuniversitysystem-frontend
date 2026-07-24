@@ -75,7 +75,7 @@ function Home() {
             {/* Updated link to use React Router mapping seamlessly to /about */}
             <Link to="/about" className="nav-link">About Us</Link>
 
-            <a href="#contact" className="nav-link">Contact</a>
+            <Link to="/contact" className="nav-link">Contact</Link>
           </div>
 
           <div className="nav-actions">
