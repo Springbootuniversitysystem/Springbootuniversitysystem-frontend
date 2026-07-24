@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginLearner } from '../services/authService';
+import ForgotPasswordModal from './ForgotPasswordModal';
 import './SignIn.css';
 
 function SignIn() {
@@ -11,6 +12,7 @@ function SignIn() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   function updateField(field, value) {
     const updated = Object.assign({}, form);
@@ -24,6 +26,15 @@ function SignIn() {
 
   function handlePasswordChange(e) {
     updateField('password', e.target.value);
+  }
+
+  function handleOpenForgotPassword(e) {
+    e.preventDefault();
+    setShowForgotPassword(true);
+  }
+
+  function handleCloseForgotPassword() {
+    setShowForgotPassword(false);
   }
 
   async function handleSubmit(e) {
@@ -44,7 +55,6 @@ function SignIn() {
   return (
     <div className="signin-screen">
       <main className="signin-form-panel">
-
 
         <div className="signin-card">
           <div className="logo-row">
@@ -74,7 +84,7 @@ function SignIn() {
             <div className="field">
               <div className="field-header">
                 <label htmlFor="password">Password</label>
-                <a href="/forgot-password" className="forgot-link">Forgot password?</a>
+                <a href="#forgot-password" className="forgot-link" onClick={handleOpenForgotPassword}>Forgot password?</a>
               </div>
               <input
                 id="password"
@@ -107,12 +117,14 @@ function SignIn() {
           <div className="avatar">TP</div>
           <div>
             <p className="author-name">Thabo Phiri</p>
-            <p className="author-detail">BSc Mechanical Engineering, UP — Class of 2024</p>
+            <p className="author-detail">BSc Mechanical Engineering, UP ,Class of 2024</p>
           </div>
         </div>
       </aside>
 
       <button type="button" className="help-btn" aria-label="Help">?</button>
+
+      {showForgotPassword && <ForgotPasswordModal onClose={handleCloseForgotPassword} />}
     </div>
   );
 }
