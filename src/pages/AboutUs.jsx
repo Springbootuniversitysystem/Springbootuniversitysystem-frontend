@@ -10,29 +10,25 @@ const AboutUs = () => {
   // Core page layout schema
   const [pageData, setPageData] = useState({
     id: 1,
-    heroTitle: "About PathFinder",
-    heroSubtitle: "We believe every South African learner deserves expert career guidance — regardless of their school, province, or background.",
-    missionHeading: "Our Mission",
-    missionBodyText1: "PathFinder was born from a simple observation: thousands of South African Grade 12 learners make life-altering university application decisions without adequate guidance. Many apply for courses they don't qualify for. Others settle for less because they don't know they qualify for more.",
-    missionBodyText2: "Our platform bridges that gap — giving every learner access to the kind of personalised career guidance previously available only to students at well-resourced schools with professional guidance counsellors.",
-    tagYear: "2021",
-    tagText: "Founded in Cape Town",
-    metric1Title: "All 9 Provinces",
-    metric1Desc: "We serve learners across every South African province, from urban centres to rural communities.",
-    metric2Title: "150+ Programmes",
-    metric2Desc: "Covering every major study area at all 26 public universities in South Africa.",
-    metric3Title: "12,000+ Students",
-    metric3Desc: "Thousands of learners have used PathFinder to make confident, informed university decisions.",
-    teamMainTitle: "Meet the Team",
-    teamMembers: [
-      { id: 1, name: "Dr. Zanele Mokoena", role: "Founder & CEO", sub: "Former DHET Education Specialist", initials: "ZM" },
-      { id: 2, name: "Ruan Pretorius", role: "CTO", sub: "UCT Computer Science Alumni", initials: "RP" },
-      { id: 3, name: "Fatima Hendricks", role: "Head of Curriculum", sub: "Wits Education Faculty PhD", initials: "FH" }
-    ]
+    heroTitle: "",
+    heroSubtitle: "",
+    missionHeading: "",
+    missionBody1: "",
+    missionBody2: "",
+    tagYear: "",
+    tagText: "",
+    teamTitle: "",
+    metrics: [],
+    teamMembers: [],
+    platformStats: {
+      totalProvinces: 0,
+      totalProgrammes: 0,
+      totalStudents: 0
+    }
   });
 
   // --- BACKEND API CONFIGURATION ---
-  const API_BASE_URL = 'http://localhost:8080/api'; // Adjust port to match your Spring Boot config
+  const API_BASE_URL = 'http://localhost:8085/api'; // Adjust port to match your Spring Boot config
 
   useEffect(() => {
     // 1. Fetch User Session Profile / Role Verification
@@ -46,12 +42,15 @@ const AboutUs = () => {
           setRole(userData.role); // e.g., "ADMIN" or "USER"
         }
 
-        // Fetch the editable page content layout configuration
-        const contentRes = await fetch(`${API_BASE_URL}/about`);
+        // Fetch the editable page content layout configuration  [Update Gift's]
+        const contentRes = await fetch(`${API_BASE_URL}/v1/about`);
+
         if (contentRes.ok) {
-          const contentData = await contentRes.json();
-          setPageData(prev => ({ ...prev, ...contentData }));
+          const response = await contentRes.json();
+
+          setPageData(response.data);
         }
+
       } catch (err) {
         console.error("Backend communication failure:", err);
         setError("Error connecting to server.");
@@ -195,21 +194,21 @@ const AboutUs = () => {
                   <label className="clean-label">Paragraph 1 Context</label>
                   <textarea
                       className="clean-textarea text-area-large"
-                      value={pageData.missionBodyText1}
-                      onChange={(e) => handleInputChange('missionBodyText1', e.target.value)}
+                      value={pageData.missionBody1}
+                      onChange={(e) => handleInputChange('missionBody1', e.target.value)}
                   />
                   <label className="clean-label">Paragraph 2 Context</label>
                   <textarea
                       className="clean-textarea text-area-large"
-                      value={pageData.missionBodyText2}
-                      onChange={(e) => handleInputChange('missionBodyText2', e.target.value)}
+                      value={pageData.missionBody2}
+                      onChange={(e) => handleInputChange('missionBody2', e.target.value)}
                   />
                 </div>
             ) : (
                 <>
                   <h2 className="section-heading">{pageData.missionHeading}</h2>
-                  <p className="body-text">{pageData.missionBodyText1}</p>
-                  <p className="body-text">{pageData.missionBodyText2}</p>
+                  <p className="body-text">{pageData.missionBody1}</p>
+                  <p className="body-text">{pageData.missionBody2}</p>
                 </>
             )}
           </div>
@@ -251,77 +250,84 @@ const AboutUs = () => {
         {/* 5. TRIPLE STAT HIGHLIGHT METRICS GRID */}
         <section className="metrics-section">
           <div className="metrics-grid">
-            {/* Card 1 */}
-            <div className="metric-card">
-              <div className="icon-circle">🌐</div>
-              {isAdmin ? (
-                  <div className="clean-admin-card-inline">
-                    <input
-                        className="clean-input-inline-title"
-                        value={pageData.metric1Title}
-                        onChange={(e) => handleInputChange('metric1Title', e.target.value)}
-                    />
-                    <textarea
-                        className="clean-textarea-inline-desc"
-                        value={pageData.metric1Desc}
-                        onChange={(e) => handleInputChange('metric1Desc', e.target.value)}
-                    />
-                  </div>
-              ) : (
-                  <>
-                    <h3 className="card-title">{pageData.metric1Title}</h3>
-                    <p className="card-desc">{pageData.metric1Desc}</p>
-                  </>
-              )}
-            </div>
 
-            {/* Card 2 */}
-            <div className="metric-card">
-              <div className="icon-circle">🎓</div>
-              {isAdmin ? (
-                  <div className="clean-admin-card-inline">
-                    <input
-                        className="clean-input-inline-title"
-                        value={pageData.metric2Title}
-                        onChange={(e) => handleInputChange('metric2Title', e.target.value)}
-                    />
-                    <textarea
-                        className="clean-textarea-inline-desc"
-                        value={pageData.metric2Desc}
-                        onChange={(e) => handleInputChange('metric2Desc', e.target.value)}
-                    />
-                  </div>
-              ) : (
-                  <>
-                    <h3 className="card-title">{pageData.metric2Title}</h3>
-                    <p className="card-desc">{pageData.metric2Desc}</p>
-                  </>
-              )}
-            </div>
+            {pageData.metrics.map((metric) => {
 
-            {/* Card 3 */}
-            <div className="metric-card">
-              <div className="icon-circle">👥</div>
-              {isAdmin ? (
-                  <div className="clean-admin-card-inline">
-                    <input
-                        className="clean-input-inline-title"
-                        value={pageData.metric3Title}
-                        onChange={(e) => handleInputChange('metric3Title', e.target.value)}
-                    />
-                    <textarea
-                        className="clean-textarea-inline-desc"
-                        value={pageData.metric3Desc}
-                        onChange={(e) => handleInputChange('metric3Desc', e.target.value)}
-                    />
+              let value = "";
+
+              switch (metric.metricKey) {
+                case "PROVINCES":
+                  value = pageData.platformStats.totalProvinces;
+                  break;
+
+                case "PROGRAMMES":
+                  value = pageData.platformStats.totalProgrammes;
+                  break;
+
+                case "STUDENTS":
+                  value = pageData.platformStats.totalStudents;
+                  break;
+
+                default:
+                  value = "";
+              }
+
+              return (
+                  <div className="metric-card" key={metric.id}>
+
+                    <div className="icon-circle">
+                      {metric.icon}
+                    </div>
+
+                    {isAdmin ? (
+
+                        <div className="clean-admin-card-inline">
+
+                          <input
+                              className="clean-input-inline-title"
+                              value={metric.title}
+                              onChange={(e) => {
+                                const metrics = [...pageData.metrics];
+                                metrics.find(m => m.id === metric.id).title = e.target.value;
+                                setPageData({...pageData, metrics});
+                              }}
+                          />
+
+                          <textarea
+                              className="clean-textarea-inline-desc"
+                              value={metric.description}
+                              onChange={(e) => {
+                                const metrics = [...pageData.metrics];
+                                metrics.find(m => m.id === metric.id).description = e.target.value;
+                                setPageData({...pageData, metrics});
+                              }}
+                          />
+
+                        </div>
+
+                    ) : (
+
+                        <>
+                          <h2 className="metric-number"> {metric.metricKey === "PROVINCES"
+                              ? value
+                              : `${value}+`}</h2>
+
+                          <h3 className="card-title">
+                            {metric.title}
+                          </h3>
+
+                          <p className="card-desc">
+                            {metric.description}
+                          </p>
+                        </>
+
+                    )}
+
                   </div>
-              ) : (
-                  <>
-                    <h3 className="card-title">{pageData.metric3Title}</h3>
-                    <p className="card-desc">{pageData.metric3Desc}</p>
-                  </>
-              )}
-            </div>
+              );
+
+            })}
+
           </div>
         </section>
 
@@ -331,11 +337,11 @@ const AboutUs = () => {
             {isAdmin ? (
                 <input
                     className="hero-input-center"
-                    value={pageData.teamMainTitle}
-                    onChange={(e) => handleInputChange('teamMainTitle', e.target.value)}
+                    value={pageData.teamTitle}
+                    onChange={(e) => handleInputChange('teamTitle', e.target.value)}
                 />
             ) : (
-                <h2 className="team-main-title">{pageData.teamMainTitle}</h2>
+                <h2 className="team-main-title">{pageData.teamTitle}</h2>
             )}
 
             <div className="team-grid">
@@ -349,18 +355,18 @@ const AboutUs = () => {
                         <div className="team-admin-card">
                           <input
                               className="team-input-name"
-                              value={member.name}
-                              onChange={(e) => handleTeamMemberChange(member.id, 'name', e.target.value)}
+                              value={member.fullName}
+                              onChange={(e) => handleTeamMemberChange(member.id, 'fullName', e.target.value)}
                           />
                           <input
                               className="team-input-role"
-                              value={member.role}
-                              onChange={(e) => handleTeamMemberChange(member.id, 'role', e.target.value)}
+                              value={member.position}
+                              onChange={(e) => handleTeamMemberChange(member.id, 'position', e.target.value)}
                           />
                           <input
                               className="team-input-sub"
-                              value={member.sub}
-                              onChange={(e) => handleTeamMemberChange(member.id, 'sub', e.target.value)}
+                              value={member.biography}
+                              onChange={(e) => handleTeamMemberChange(member.id, 'biography', e.target.value)}
                           />
                           <input
                               className="team-input-sub font-small"
@@ -372,9 +378,9 @@ const AboutUs = () => {
                         </div>
                     ) : (
                         <>
-                          <h4 className="member-name">{member.name}</h4>
-                          <span className="member-role">{member.role}</span>
-                          <p className="member-sub">{member.sub}</p>
+                          <h4 className="member-name">{member.fullName}</h4>
+                          <span className="member-role">{member.position}</span>
+                          <p className="member-sub">{member.biography}</p>
                         </>
                     )}
                   </div>
