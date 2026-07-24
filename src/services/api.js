@@ -12,7 +12,10 @@ async function request(path, options) {
     options = {};
   }
 
-  options.headers = { 'Content-Type': 'application/json' };
+  options.headers = {
+    "Content-Type":"application/json",
+    ...(options.headers || {})
+  };
 
   const res = await fetch(BASE_URL + path, options);
 

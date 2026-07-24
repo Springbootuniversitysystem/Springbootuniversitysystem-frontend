@@ -44,7 +44,7 @@ function SignIn() {
 
     try {
       await loginLearner(form);
-      navigate('/dashboard');
+      navigate('/career-guidance');
     } catch (err) {
       setError(err.message);
     } finally {

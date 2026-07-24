@@ -5,22 +5,28 @@ import CreateAccount from './pages/CreateAccount';
 import SignIn from './pages/SignIn';
 import MarksAnalysis from './pages/MarksAnalysis';
 import Profile from './pages/Profile';
+import AboutUs from './pages/AboutUs';
 import Contact from './pages/Contact';
-
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/career-guidance" element={<CareerGuidance />} />
-        <Route path="/create-account" element={<CreateAccount />} />
-        <Route path="/sign-in" element={<SignIn />} />
-        <Route path="/marks-analysis" element={<MarksAnalysis />} />
-        <Route path="/dashboard" element={<Profile />} />
-        <Route path="/contact" element={<Contact />} />
-      </Routes>
-    </BrowserRouter>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/career-guidance" element={<CareerGuidance />} />
+
+          {/* About Us Route - Switched to USER for client-side production testing */}
+          <Route path="/about" element={<AboutUs role="USER" />} />
+
+            //contact us
+            <Route path="/contact" element={<Contact />} />
+
+          <Route path="/create-account" element={<CreateAccount />} />
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/marks-analysis" element={<MarksAnalysis />} />
+          <Route path="/profile" element={<Profile />} />
+        </Routes>
+      </BrowserRouter>
   );
 }
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { generateRecommendations, saveRecommendedCourses } from '../services/recommendationsStore';
+import { saveRecommendedCourses } from "../services/recommendationsStore";
+import { analyseMarks } from "../services/analysisService";
 import './MarksAnalysis.css';
 
 const subjectOptions = [
@@ -155,7 +156,7 @@ function MarksAnalysis() {
     );
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setError('');
 
@@ -164,8 +165,13 @@ function MarksAnalysis() {
       const row = rows[i];
       if (row.mark !== '' && row.subject !== '') {
         const numericValue = Number(row.mark);
+
+        //Match the back-end fields
         if (!Number.isNaN(numericValue)) {
-          subjectMarks.push({ subject: row.subject, mark: numericValue });
+          subjectMarks.push({
+            subjectName: row.subject,
+            percentage: numericValue
+          });
         }
       }
     }
@@ -175,9 +181,21 @@ function MarksAnalysis() {
       return;
     }
 
-    const recommendations = generateRecommendations(subjectMarks);
-    saveRecommendedCourses(recommendations);
-    navigate('/dashboard');
+    try {
+      const response = await analyseMarks(subjectMarks);
+
+      console.log("Backend response:", response);
+
+
+      saveRecommendedCourses(response.data);
+
+      navigate("/profile");
+    } catch (err) {
+      console.error(err);
+      setError("Failed to analyse your marks. Please try again.");
+    }
+
+
   }
 
   return (

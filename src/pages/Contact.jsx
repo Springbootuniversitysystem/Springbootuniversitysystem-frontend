@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import './Contact.css';
 
@@ -11,12 +11,18 @@ const subjectOptions = [
 
 function Contact() {
   const [form, setForm] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
+    name: "",
+    emailAddress: "",
+    subject: "",
+    message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+
+  const [contactInfo, setContactInfo] = useState({
+    supportEmail: "",
+    supportPhone: "",
+    officeLocation: ""
+  });
 
   function updateField(field, value) {
     const updated = Object.assign({}, form);
@@ -29,7 +35,7 @@ function Contact() {
   }
 
   function handleEmailChange(e) {
-    updateField('email', e.target.value);
+    updateField('emailAddress', e.target.value);
   }
 
   function handleSubjectChange(e) {
@@ -40,15 +46,68 @@ function Contact() {
     updateField('message', e.target.value);
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    setSubmitted(true);
-    // TODO: wire up to POST /contact once the backend endpoint exists
+
+    try {
+      const response = await fetch(
+          "http://localhost:8085/api/v1/contact/message",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(form),
+          }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to send message.");
+      }
+
+      await response.json();
+
+      setSubmitted(true);
+
+      // Clear the form
+      setForm({
+        name: "",
+        emailAddress: "",
+        subject: "",
+        message: "",
+      });
+
+    } catch (err) {
+      console.error(err);
+      alert("Unable to send message.");
+    }
   }
 
   function renderSubjectOption(subject) {
     return <option key={subject} value={subject}>{subject}</option>;
   }
+
+  //Fetch information
+  useEffect(() => {
+    const loadContactInfo = async () => {
+      try {
+        const response = await fetch("http://localhost:8085/api/v1/contact/info");
+
+        if (!response.ok) {
+          throw new Error("Failed to load contact information");
+        }
+
+        const result = await response.json();
+
+        setContactInfo(result.data);
+
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    loadContactInfo();
+  }, []);
 
   return (
     <div className="contact-screen">
@@ -127,7 +186,7 @@ function Contact() {
                     id="email"
                     type="email"
                     placeholder="Tendani@email.com"
-                    value={form.email}
+                    value={form.emailAddress}
                     onChange={handleEmailChange}
                     required
                   />
@@ -179,7 +238,7 @@ function Contact() {
             </div>
             <div>
               <p className="info-title">Email Us</p>
-              <p className="info-detail">support@pathfinder.co.za</p>
+              <p className="info-detail">{contactInfo.supportEmail}</p>
               <p className="info-sub">Response within 24 hours</p>
             </div>
           </div>
@@ -194,7 +253,7 @@ function Contact() {
             </div>
             <div>
               <p className="info-title">Call Us</p>
-              <p className="info-detail">0800 657 098</p>
+              <p className="info-detail">{contactInfo.supportPhone}</p>
               <p className="info-sub">Mon–Fri, 08:00–17:00</p>
             </div>
           </div>
@@ -209,7 +268,7 @@ function Contact() {
             </div>
             <div>
               <p className="info-title">Office</p>
-              <p className="info-detail">124 BlackHealth, Johannesburg</p>
+              <p className="info-detail">{contactInfo.officeLocation}</p>
               <p className="info-sub">Gauteng, 0954</p>
             </div>
           </div>
