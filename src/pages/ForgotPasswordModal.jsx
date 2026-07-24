@@ -25,23 +25,70 @@ function ForgotPasswordModal(props) {
     setConfirmPassword(e.target.value);
   }
 
-  function handleSendCode(e) {
+  async function handleSendCode(e) {
     e.preventDefault();
     setError('');
-    // TODO: wire up to POST /auth/forgot-password once the backend endpoint exists
-    setStep('code');
+
+    try {
+      const response = await fetch(
+          "http://localhost:8085/api/auth/forgot-password",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              email: email
+            })
+          }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to send reset code.");
+      }
+
+      // Move to verification screen
+      setStep("code");
+
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
-  function handleVerifyCode(e) {
-    e.preventDefault();
-    setError('');
-    if (code.trim() === '') {
-      setError('Enter the code we sent you.');
-      return;
+    async function handleVerifyCode(e) {
+        e.preventDefault();
+        setError("");
+
+        try {
+            const response = await fetch(
+                "http://localhost:8085/api/auth/verify-reset-code",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        code: code
+                    })
+                }
+            );
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || "Invalid verification code.");
+            }
+
+            // Move to the new password screen
+            setStep("newPassword");
+
+        } catch (err) {
+            setError(err.message);
+        }
     }
-    // TODO: wire up to POST /auth/verify-reset-code once the backend endpoint exists
-    setStep('newPassword');
-  }
 
   function handleTryDifferentEmail() {
     setCode('');
@@ -49,23 +96,48 @@ function ForgotPasswordModal(props) {
     setStep('email');
   }
 
-  function handleResetPassword(e) {
-    e.preventDefault();
-    setError('');
+    async function handleResetPassword(e) {
+        e.preventDefault();
+        setError('');
 
-    if (newPassword.length < 8) {
-      setError('Password must be at least 8 characters.');
-      return;
+        if (newPassword.length < 8) {
+            setError("Password must be at least 8 characters.");
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            setError("Passwords do not match.");
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                "http://localhost:8085/api/auth/reset-password",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        code: code,
+                        newPassword: newPassword
+                    })
+                }
+            );
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || "Password reset failed.");
+            }
+
+            setStep("success");
+
+        } catch (err) {
+            setError(err.message);
+        }
     }
-
-    if (newPassword !== confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-
-    // TODO: wire up to POST /auth/reset-password once the backend endpoint exists
-    setStep('success');
-  }
 
   function handleClose() {
     props.onClose();
