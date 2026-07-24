@@ -20,7 +20,7 @@ function App() {
           <Route path="/create-account" element={<CreateAccount />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/marks-analysis" element={<MarksAnalysis />} />
-          <Route path="/dashboard" element={<Profile />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </BrowserRouter>
   );
