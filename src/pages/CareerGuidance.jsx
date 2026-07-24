@@ -68,7 +68,7 @@ function CareerGuidance() {
         <div className="nav-links">
           <Link to="/" className="nav-link">Home</Link>
           <Link to="/career-guidance" className="nav-link nav-link-active">Career Guidance</Link>
-          <Link to="/about-us" className="nav-link">About Us</Link>
+          <Link to="/about" className="nav-link">About Us</Link>
           <a href="#contact" className="nav-link">Contact</a>
         </div>
 
