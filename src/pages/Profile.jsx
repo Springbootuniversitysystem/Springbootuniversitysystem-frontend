@@ -21,7 +21,11 @@ function Profile() {
 
 
   const analysis = getRecommendedCourses();
-  const [courses, setCourses] = useState(getRecommendedCourses());
+  const [courses, setCourses] = useState(
+      analysis?.recommendations?.[0]?.programmes || []
+  );
+
+
   console.log("Courses:", courses);
   const [showSavedOnly, setShowSavedOnly] = useState(false);
   const [savedProfile, setSavedProfile] = useState({
@@ -181,15 +185,29 @@ function Profile() {
     if (course.saved) {
       bookmarkIcon = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/bookmark-fill.svg';
     }
-
+/*
     function handleToggleClick() {
+      toggleSave(course.id);
+
+    }
+  */
+    function handleToggleClick(e) {
+      e.preventDefault();      // prevents opening the careers page when clicking bookmark
+      e.stopPropagation();
       toggleSave(course.id);
     }
 
 
-
     return (
-      <div key={course.id} className="course-card">
+      //<div key={course.id} className="course-card">
+
+        <Link
+            key={course.id}
+            to="/programme-careers"
+            state={{ programme: course }}
+            className="course-card"
+            style={{ textDecoration: "none", color: "inherit" }}
+        >
         <div className="course-icon-wrap">
           <img
             src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/mortarboard-fill.svg"
@@ -228,7 +246,7 @@ function Profile() {
         >
           <img src={bookmarkIcon} alt="" className="save-icon" />
         </button>
-      </div>
+      </Link>
     );
   }
 
@@ -301,7 +319,7 @@ function Profile() {
               />
             </div>
             <div>
-              <p className="stat-number">{courses.length}</p>
+              <p className="stat-number">{analysis?.totalMatches ?? 0}</p>
               <p className="stat-label">Recommended Courses</p>
             </div>
           </div>
@@ -338,7 +356,7 @@ function Profile() {
         <div className="profile-columns">
           <div className="recommendations-column">
             <div className="recommendations-header">
-              <h2>Recommended Courses</h2>
+              <h2> {analysis?.recommendations?.[0]?.courseName || "Recommended Courses"}</h2>
               <button
                 type="button"
                 className={showSavedOnly ? 'saved-filter-btn saved-filter-btn-active' : 'saved-filter-btn'}

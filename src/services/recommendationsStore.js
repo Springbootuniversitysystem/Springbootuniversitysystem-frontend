@@ -12,17 +12,13 @@ function getRecommendedCourses() {
   const stored = localStorage.getItem(ANALYSIS_KEY);
 
   if (!stored) {
-    return [];
+    return null;
   }
 
   try {
-    const analysis = JSON.parse(stored);
-
-    return (
-        analysis.recommendations?.[0]?.programmes || []
-    );
+    return JSON.parse(stored);
   } catch (err) {
-    return [];
+    return null;
   }
 }
 
