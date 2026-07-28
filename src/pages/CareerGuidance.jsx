@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './CareerGuidance.css';
 
 const guidanceOptions = [
@@ -33,6 +33,25 @@ const guidanceOptions = [
 ];
 
 function CareerGuidance() {
+  const navigate = useNavigate();
+
+  function handleCareerGuidance() {
+    console.log("Button clicked");
+
+    const token = localStorage.getItem("token");
+
+    console.log("Token:", token);
+
+    if (!token) {
+      console.log("Redirecting to sign in");
+      navigate("/sign-in");
+      return;
+    }
+
+    console.log("Redirecting to marks analysis");
+    navigate("/marks-analysis");
+  }
+
   function renderGuidanceCard(option) {
     return (
       <div key={option.title} className="guidance-card">
@@ -41,9 +60,19 @@ function CareerGuidance() {
         </div>
         <h3>{option.title}</h3>
         <p>{option.description}</p>
-        <Link to={option.linkTo} className="guidance-link">
-          {option.linkLabel}
-        </Link>
+        {option.title === "Career Guidance" ? (
+          <button
+            type="button"
+            className="guidance-link"
+            onClick={handleCareerGuidance}
+          >
+            {option.linkLabel}
+          </button>
+        ) : (
+          <Link to={option.linkTo} className="guidance-link">
+            {option.linkLabel}
+          </Link>
+        )}
       </div>
     );
   }

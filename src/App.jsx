@@ -7,6 +7,7 @@ import MarksAnalysis from './pages/MarksAnalysis';
 import Profile from './pages/Profile';
 import AboutUs from './pages/AboutUs';
 import Contact from './pages/Contact';
+import AdminDashboard from './pages/AdminDashboard';
 import ProgrammeCareers from "./pages/ProgrammeCareers.jsx";
 
 function App() {
@@ -16,18 +17,19 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/career-guidance" element={<CareerGuidance />} />
 
-          {/* About Us Route - Switched to USER for client-side production testing */}
-          <Route path="/about" element={<AboutUs role="USER" />} />
+          {/* Changed role to ADMIN so the edit buttons appear for you */}
+          <Route path="/about" element={<AboutUs role="ADMIN" />} />
 
-            //contact us
-            <Route path="/contact" element={<Contact />} />
+          {/* Contact Us */}
+          <Route path="/contact" element={<Contact />} />
 
           <Route path="/create-account" element={<CreateAccount />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/marks-analysis" element={<MarksAnalysis />} />
+          
           <Route path="/profile" element={<Profile />} />
-
-            <Route path="/programme-careers" element={<ProgrammeCareers />}/>
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/programme-careers" element={<ProgrammeCareers />} />
         </Routes>
       </BrowserRouter>
   );
