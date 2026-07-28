@@ -10,6 +10,7 @@
   overflow-y: auto;
   background: #faf9f6;
   color: #1a1a2e;
+  text-align: left;
 }
 
 .career-nav {
@@ -120,6 +121,7 @@
   max-width: 900px;
   margin: 0 auto;
   padding: 40px 48px 96px;
+  text-align: left;
 }
 
 .back-link-thin {
@@ -318,4 +320,24 @@
   font-weight: 700;
   font-size: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.back-link-thin {
+  display: inline-block;
+  align-self: flex-start;
+  color: #555;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border: 1px solid #e5e4e7;
+  border-radius: 999px;
+  background: #fff;
+  margin-bottom: 28px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.back-link-thin:hover {
+  background: #f4f3ec;
+  border-color: #d4af37;
 }

@@ -13,21 +13,21 @@ const guidanceOptions = [
     icon: 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/file-earmark-text-fill.svg',
     title: 'CV Builder',
     description: 'Create a professional CV to use for bursary applications, part-time jobs, and university entrance portfolios.',
-    linkLabel: 'Get started',
+    linkLabel: 'Coming Soon',
     linkTo: '/create-account',
   },
   {
     icon: 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/graph-up-arrow.svg',
     title: 'Subject Analysis',
     description: 'Get a deep dive into your academic strengths and see which subjects open the most doors for you.',
-    linkLabel: 'Get started',
+    linkLabel: 'Coming Soon',
     linkTo: '/create-account',
   },
   {
     icon: 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/award-fill.svg',
     title: 'Bursary Finder',
     description: 'Discover funding opportunities and bursaries that match your academic profile and financial needs.',
-    linkLabel: 'Get started',
+    linkLabel: 'Coming Soon',
     linkTo: '/create-account',
   },
 ];
@@ -42,7 +42,7 @@ function CareerGuidance() {
         <h3>{option.title}</h3>
         <p>{option.description}</p>
         <Link to={option.linkTo} className="guidance-link">
-          {option.linkLabel} →
+          {option.linkLabel}
         </Link>
       </div>
     );
@@ -69,7 +69,7 @@ function CareerGuidance() {
           <Link to="/" className="nav-link">Home</Link>
           <Link to="/career-guidance" className="nav-link nav-link-active">Career Guidance</Link>
           <Link to="/about" className="nav-link">About Us</Link>
-          <a href="#contact" className="nav-link">Contact</a>
+          <Link to="/contact" className="nav-link">Contact</Link>
         </div>
 
         <div className="nav-actions">

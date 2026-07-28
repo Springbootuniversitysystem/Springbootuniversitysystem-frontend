@@ -243,7 +243,7 @@ function MarksAnalysis() {
       </nav>
 
       <main className="marks-main">
-        <Link to="/career-guidance" className="back-link-thin">← Back</Link>
+        <Link to="/career-guidance" className="back-link-thin"> Back</Link>
         <h1>Career Guidance</h1>
         <p className="marks-page-subtitle">Enter your exam marks below to receive personalised university course recommendations</p>
 
