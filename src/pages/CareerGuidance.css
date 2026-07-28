@@ -199,10 +199,21 @@
 }
 
 .guidance-link {
-  color: #b8860b;
-  font-weight: 600;
-  font-size: 15px;
+  display: inline-block;
+  color: #0f1b3d;
+  background: #f4f3ec;
+  font-weight: 700;
+  font-size: 14px;
   text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1px solid #e5e4e7;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.guidance-link:hover {
+  background: #d4af37;
+  border-color: #d4af37;
 }
 
 .help-btn {
