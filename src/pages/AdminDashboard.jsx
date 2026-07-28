@@ -1,47 +1,81 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 
 export default function AdminDashboard() {
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('overview');
-    const [loading, setLoading] = useState(false);
+
+    // Basic security check to ensure only admins can see this page
+    useEffect(() => {
+        const role = localStorage.getItem('role');
+        if (role !== 'ADMIN' && role !== 'ROLE_ADMIN') {
+            navigate('/sign-in');
+        }
+    }, [navigate]);
 
     // State containers for backend data
     const [stats, setStats] = useState({
         totalLearners: 124,
-        totalApplications: 45,
         pendingMessages: 8,
         totalProgrammes: 18,
     });
 
-    const [programmes, setProgrammes] = useState([]);
+    const [programmes, setProgrammes] = useState([
+        { id: 1, programmeName: 'BSc Computer Science', institutionName: 'University of Johannesburg', faculty: 'Science', minimumAps: 30 }
+    ]);
+
+    const [learners, setLearners] = useState([
+        { id: 1, fullName: 'Sibusiso Mokoena', email: 'sibu@gmail.com', grade: 'Grade 12', status: 'Active' },
+        { id: 2, fullName: 'Lerato Ndlovu', email: 'lerato@gmail.com', grade: 'Grade 11', status: 'Active' }
+    ]);
+
+    const [messages, setMessages] = useState([
+        { id: 1, date: '2026-07-27', sender: 'Thabo Molefe', email: 'thabo@gmail.com', subject: 'APS Score Enquiry', message: 'How do I calculate technical subject points?', status: 'Pending' }
+    ]);
+
     const [newProgramme, setNewProgramme] = useState({
-        programmeName: '',
-        institutionName: '',
-        faculty: '',
-        minimumAps: '',
-        applicationDeadline: '',
-        description: '',
+        programmeName: '', institutionName: '', faculty: '', minimumAps: '', applicationDeadline: '', description: '',
     });
 
-    // Mock initial load or API call setup
-    useEffect(() => {
-        // Replace with real service calls when Emmanuel completes endpoints:
-        // axios.get('/api/v1/admin/dashboard/stats').then(res => setStats(res.data));
-    }, []);
-
+    // --- Action Handlers ---
     const handleAddProgramme = (e) => {
         e.preventDefault();
         if (!newProgramme.programmeName || !newProgramme.institutionName) return;
-
         setProgrammes([...programmes, { ...newProgramme, id: Date.now() }]);
-        setNewProgramme({
-            programmeName: '',
-            institutionName: '',
-            faculty: '',
-            minimumAps: '',
-            applicationDeadline: '',
-            description: '',
-        });
+        setStats({ ...stats, totalProgrammes: stats.totalProgrammes + 1 });
+        setNewProgramme({ programmeName: '', institutionName: '', faculty: '', minimumAps: '', applicationDeadline: '', description: '' });
+    };
+
+    const handleDeleteProgramme = (id) => {
+        if (window.confirm("Are you sure you want to delete this programme?")) {
+            setProgrammes(programmes.filter(prog => prog.id !== id));
+            setStats({ ...stats, totalProgrammes: stats.totalProgrammes - 1 });
+        }
+    };
+
+    const handleDeleteLearner = (id) => {
+        if (window.confirm("Are you sure you want to delete this learner account permanently?")) {
+            setLearners(learners.filter(learner => learner.id !== id));
+            setStats({ ...stats, totalLearners: stats.totalLearners - 1 });
+        }
+    };
+
+    const handleToggleSupportStatus = (id) => {
+        setMessages(messages.map(msg => {
+            if (msg.id === id) {
+                // Toggle between Pending, Involved, and Resolved
+                const newStatus = msg.status === 'Pending' ? 'Involved' : msg.status === 'Involved' ? 'Resolved' : 'Pending';
+                return { ...msg, status: newStatus };
+            }
+            return msg;
+        }));
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        navigate('/sign-in');
     };
 
     return (
@@ -53,29 +87,21 @@ export default function AdminDashboard() {
                     <span className="admin-badge">Admin Portal</span>
                 </div>
                 <nav className="admin-nav">
-                    <button
-                        className={`nav-item ${activeTab === 'overview' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('overview')}
-                    >
+                    <button className={`nav-item ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>
                         📊 Overview
                     </button>
-                    <button
-                        className={`nav-item ${activeTab === 'programmes' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('programmes')}
-                    >
+                    <button className={`nav-item ${activeTab === 'programmes' ? 'active' : ''}`} onClick={() => setActiveTab('programmes')}>
                         🎓 Programmes
                     </button>
-                    <button
-                        className={`nav-item ${activeTab === 'learners' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('learners')}
-                    >
+                    <button className={`nav-item ${activeTab === 'learners' ? 'active' : ''}`} onClick={() => setActiveTab('learners')}>
                         👥 Learners
                     </button>
-                    <button
-                        className={`nav-item ${activeTab === 'messages' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('messages')}
-                    >
+                    <button className={`nav-item ${activeTab === 'messages' ? 'active' : ''}`} onClick={() => setActiveTab('messages')}>
                         📩 Support Inbox
+                    </button>
+
+                    <button className="nav-item" onClick={handleLogout} style={{ marginTop: 'auto', color: '#ff4d4f' }}>
+                        🚪 Logout
                     </button>
                 </nav>
             </aside>
@@ -109,18 +135,11 @@ export default function AdminDashboard() {
                                 <p>Active Programmes</p>
                             </div>
                         </div>
-                        <div className="stat-card">
-                            <span className="stat-icon">📄</span>
-                            <div>
-                                <h3>{stats.totalApplications}</h3>
-                                <p>Applications Tracked</p>
-                            </div>
-                        </div>
                         <div className="stat-card warning">
                             <span className="stat-icon">📩</span>
                             <div>
                                 <h3>{stats.pendingMessages}</h3>
-                                <p>Pending Support Tickets</p>
+                                <p>Support Tickets</p>
                             </div>
                         </div>
                     </div>
@@ -133,51 +152,48 @@ export default function AdminDashboard() {
                             <h3>Add New University Programme</h3>
                             <form onSubmit={handleAddProgramme} className="admin-form">
                                 <div className="form-row">
-                                    <input
-                                        type="text"
-                                        placeholder="Programme Name (e.g. BSc Computer Science)"
-                                        value={newProgramme.programmeName}
-                                        onChange={(e) => setNewProgramme({ ...newProgramme, programmeName: e.target.value })}
-                                        required
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="Institution Name (e.g. UJ, Wits)"
-                                        value={newProgramme.institutionName}
-                                        onChange={(e) => setNewProgramme({ ...newProgramme, institutionName: e.target.value })}
-                                        required
-                                    />
+                                    <input type="text" placeholder="Programme Name" value={newProgramme.programmeName} onChange={(e) => setNewProgramme({ ...newProgramme, programmeName: e.target.value })} required />
+                                    <input type="text" placeholder="Institution Name" value={newProgramme.institutionName} onChange={(e) => setNewProgramme({ ...newProgramme, institutionName: e.target.value })} required />
                                 </div>
-
                                 <div className="form-row">
-                                    <input
-                                        type="text"
-                                        placeholder="Faculty"
-                                        value={newProgramme.faculty}
-                                        onChange={(e) => setNewProgramme({ ...newProgramme, faculty: e.target.value })}
-                                    />
-                                    <input
-                                        type="number"
-                                        placeholder="Min. APS Score"
-                                        value={newProgramme.minimumAps}
-                                        onChange={(e) => setNewProgramme({ ...newProgramme, minimumAps: e.target.value })}
-                                    />
-                                    <input
-                                        type="date"
-                                        value={newProgramme.applicationDeadline}
-                                        onChange={(e) => setNewProgramme({ ...newProgramme, applicationDeadline: e.target.value })}
-                                    />
+                                    <input type="text" placeholder="Faculty" value={newProgramme.faculty} onChange={(e) => setNewProgramme({ ...newProgramme, faculty: e.target.value })} />
+                                    <input type="number" placeholder="Min. APS Score" value={newProgramme.minimumAps} onChange={(e) => setNewProgramme({ ...newProgramme, minimumAps: e.target.value })} />
+                                    <input type="date" value={newProgramme.applicationDeadline} onChange={(e) => setNewProgramme({ ...newProgramme, applicationDeadline: e.target.value })} />
                                 </div>
-
-                                <textarea
-                                    placeholder="Programme Description..."
-                                    rows="3"
-                                    value={newProgramme.description}
-                                    onChange={(e) => setNewProgramme({ ...newProgramme, description: e.target.value })}
-                                />
-
+                                <textarea placeholder="Programme Description..." rows="2" value={newProgramme.description} onChange={(e) => setNewProgramme({ ...newProgramme, description: e.target.value })} />
                                 <button type="submit" className="primary-btn">Save Programme</button>
                             </form>
+                        </div>
+
+                        <div className="table-wrapper" style={{ marginTop: '2rem' }}>
+                            <h3>Current Programmes</h3>
+                            <table className="admin-table">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Programme</th>
+                                    <th>Institution</th>
+                                    <th>Min APS</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {programmes.map((prog) => (
+                                    <tr key={prog.id}>
+                                        <td>{prog.id}</td>
+                                        <td>{prog.programmeName}</td>
+                                        <td>{prog.institutionName}</td>
+                                        <td>{prog.minimumAps}</td>
+                                        <td>
+                                            <button onClick={() => handleDeleteProgramme(prog.id)} className="action-btn danger">Delete</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                                {programmes.length === 0 && (
+                                    <tr><td colSpan="5" style={{textAlign: 'center'}}>No programmes found.</td></tr>
+                                )}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 )}
@@ -193,21 +209,24 @@ export default function AdminDashboard() {
                                     <th>Full Name</th>
                                     <th>Email</th>
                                     <th>Grade</th>
-                                    <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Sibusiso Mokoena</td>
-                                    <td>sibu@gmail.com</td>
-                                    <td>Grade 12</td>
-                                    <td><span className="badge success">Active</span></td>
-                                    <td>
-                                        <button className="action-btn danger">Deactivate</button>
-                                    </td>
-                                </tr>
+                                {learners.map((learner) => (
+                                    <tr key={learner.id}>
+                                        <td>{learner.id}</td>
+                                        <td>{learner.fullName}</td>
+                                        <td>{learner.email}</td>
+                                        <td>{learner.grade}</td>
+                                        <td>
+                                            <button onClick={() => handleDeleteLearner(learner.id)} className="action-btn danger">Delete</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                                {learners.length === 0 && (
+                                    <tr><td colSpan="5" style={{textAlign: 'center'}}>No learners found.</td></tr>
+                                )}
                                 </tbody>
                             </table>
                         </div>
@@ -223,23 +242,32 @@ export default function AdminDashboard() {
                                 <tr>
                                     <th>Date</th>
                                     <th>Sender Name</th>
-                                    <th>Email</th>
                                     <th>Subject</th>
                                     <th>Message</th>
                                     <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>2026-07-27</td>
-                                    <td>Thabo Molefe</td>
-                                    <td>thabo@gmail.com</td>
-                                    <td>APS Score Enquiry</td>
-                                    <td>How do I calculate technical subject points?</td>
-                                    <td>
-                                        <button className="action-btn primary">Mark Resolved</button>
-                                    </td>
-                                </tr>
+                                {messages.map((msg) => (
+                                    <tr key={msg.id}>
+                                        <td>{msg.date}</td>
+                                        <td>{msg.sender}</td>
+                                        <td>{msg.subject}</td>
+                                        <td>{msg.message}</td>
+                                        <td>
+                                            <span className={`badge ${msg.status.toLowerCase()}`}>{msg.status}</span>
+                                        </td>
+                                        <td>
+                                            <button
+                                                onClick={() => handleToggleSupportStatus(msg.id)}
+                                                className="action-btn primary"
+                                            >
+                                                Mark {msg.status === 'Pending' ? 'Involved' : msg.status === 'Involved' ? 'Resolved' : 'Pending'}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
                                 </tbody>
                             </table>
                         </div>
