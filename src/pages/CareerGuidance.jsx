@@ -53,6 +53,8 @@ function CareerGuidance() {
   }
 
   function renderGuidanceCard(option) {
+    const isComingSoon = option.linkLabel === "Coming Soon";
+
     return (
       <div key={option.title} className="guidance-card">
         <div className="guidance-icon-wrap">
@@ -60,7 +62,7 @@ function CareerGuidance() {
         </div>
         <h3>{option.title}</h3>
         <p>{option.description}</p>
-        {option.title === "Career Guidance" ? (
+        {option.title === "Career Guidance" && (
           <button
             type="button"
             className="guidance-link"
@@ -68,7 +70,13 @@ function CareerGuidance() {
           >
             {option.linkLabel}
           </button>
-        ) : (
+        )}
+        {option.title !== "Career Guidance" && isComingSoon && (
+          <span className="guidance-link guidance-link-disabled">
+            {option.linkLabel}
+          </span>
+        )}
+        {option.title !== "Career Guidance" && !isComingSoon && (
           <Link to={option.linkTo} className="guidance-link">
             {option.linkLabel}
           </Link>
